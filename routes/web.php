@@ -20,25 +20,27 @@ use Symfony\Component\Process\Exception\ProcessFailedException;
 |
 */
 
-Route::get('/', function () {
+Route::view('/', 'welcome');
+
+Route::get('/update', function () {
     $commands = [
         'git pull' => 'Git',
-        'php artisan optimize:clear' => 'Cache clear',
-        'npm run prod' => 'Build for production',
+        'php artisan optimize:clear' => 'Cache',
+        'npm run prod' => 'Build',
+        'php artisan optimize:clear' => 'Cache',
     ];
 
     foreach ($commands as $command => $prefix) {
         $basePath = base_path();
+        echo "<div style='font-weight:bold'>{$prefix}:</div>";
+        echo "<div style='font-style:italic'><small>Please wait...</small></div>";
+        ob_flush();
         $cmd = "cd {$basePath} && {$command}";
         $output = shell_exec($cmd);
-        $heading = "<div style='font-weight:bold'>{$prefix}:</div>";
-        echo $heading . nl2br($output) . '<br>';
-        flush();
+        echo nl2br($output) . '<br>';
         ob_flush();
     }
 });
-
-// Route::view('/', 'welcome');
 
 // Route::get('/singleton', function () {
 //     App::singleton('time', function ($app) {
