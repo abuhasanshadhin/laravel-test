@@ -21,14 +21,21 @@ use Symfony\Component\Process\Exception\ProcessFailedException;
 */
 
 Route::get('/', function () {
-    $o = shell_exec('npm i');
-    echo nl2br($o);
-    flush();
-    ob_flush();
-    $o1 = shell_exec('npm run prod');
-    echo nl2br($o1);
-    flush();
-    ob_flush();
+    $commands = [
+        'git pull' => 'Git',
+        'php artisan optimize:clear' => 'Cache clear',
+        'npm run prod' => 'Build for production',
+    ];
+
+    foreach ($commands as $command => $prefix) {
+        $basePath = base_path();
+        $cmd = "cd {$basePath} && {$command}";
+        $output = shell_exec($cmd);
+        $heading = "<div style='font-weight:bold'>{$prefix}:</div>";
+        echo $heading . nl2br($output) . '<br>';
+        flush();
+        ob_flush();
+    }
 });
 
 // Route::view('/', 'welcome');
